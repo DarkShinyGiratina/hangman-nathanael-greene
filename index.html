@@ -1,0 +1,107 @@
+<!DOCTYPE html><html><head><title>Hangman IgniteCS</title><meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui=1"><meta charset="UTF-8"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="description" content=""><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon64.png"><link rel="apple-touch-icon" sizes="180x180" href="icon180.png"><link rel="icon" type="image/png" sizes="32x32" href="icon32.png"><link rel="icon" type="image/png" sizes="16x16" href="icon16.png"><style>html,body {
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  overflow:hidden;
+  font-family: Verdana;
+}
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#canvaswrapper {
+  text-align: center ;
+}
+</style><style>@font-face { font-family: "BitCell" ; src: url("fonts/BitCell.ttf") format("truetype"); }</style><script>window.fonts = ["BitCell"]</script></head><body class="noselect custom-cursor" oncontextmenu="return false;"><div id="canvaswrapper"></div><script type="text/javascript">var resources = {"images":[{"file":"icon.png","version":0,"size":0,"properties":{}},{"file":"sprite1.png","version":61,"size":157,"properties":{"frames":1,"fps":1}},{"file":"sprite2.png","version":3,"size":191,"properties":{"frames":1,"fps":5}},{"file":"sprite3.png","version":4,"size":200,"properties":{"frames":1,"fps":5}},{"file":"sprite4.png","version":4,"size":218,"properties":{"frames":1,"fps":5}},{"file":"sprite5.png","version":4,"size":235,"properties":{"frames":1,"fps":5}},{"file":"sprite6.png","version":4,"size":245,"properties":{"frames":1,"fps":5}},{"file":"sprite7.png","version":3,"size":242,"properties":{"frames":1,"fps":5}}],"assets":[],"maps":{},"sounds":[],"music":[]};
+var graphics = "M1";
+
+</script><script type="text/javascript">var orientation = 'any' ;
+var aspect = 'free' ;
+var ms_libs = [] ;
+window.skip_service_worker = true;
+window.exported_project = true;
+window.ms_use_server = false ;
+</script><script src="runner.js"></script><script src="brython.js"></script><script src="brython_stdlib.js"></script><script src="microengine.js"></script></body><script type="text/python">from browser import window
+import traceback
+import sys
+
+def execute(str,filename):
+  try:
+    code = compile(str,filename,"exec")
+    return exec(code,globals())
+  except BaseException as err:
+    exp = traceback.format_exception(err)
+    sys.stderr.write(exp)
+  except Error as err:
+    exp = traceback.format_exception(err)
+    sys.stderr.write(exp)
+
+window.python = execute
+window.glob = globals()
+window.pythonLoaded()
+</script><script>window.pythonLoaded = function() {
+  window.player = new Player() ;
+  document.body.focus() ;
+}
+window.addEventListener("load",function() {
+  brython() ;
+}) ;
+
+</script><script id="code" type="text/x-microscript">
+
+sprite_index = 1
+guesses_left = 6
+word = "ONOMATOPOEIA"
+answer_output = ["_"] * len(word)
+past_wrong_guesses = []
+
+def init():
+  screen.fillRect(0, 0, 500, 500, "#FFFFFF")
+  pass
+
+def update():
+  alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+  "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+  for char in alphabet:
+    if checkInput(keyboard, char):
+      hangman_logic(char)
+  pass
+
+def draw():
+  screen.clear("#333")
+  screen.fillRect(0, 0, 500, 500, "#FFFFFF")
+  screen.drawSprite("sprite" + str(sprite_index), 0, 0, 128, 128)
+  answer_text = " ".join(answer_output)
+  screen.drawText(answer_text, 0, -70, 30, "#000000")
+  screen.drawText(" ".join(past_wrong_guesses), -100, 0, 20, "#000000")
+  pass
+
+def hangman_logic(guess):  
+  global guesses_left, sprite_index, word, answer_output, past_wrong_guesses
+  if guesses_left > 0:
+    if guess in past_wrong_guesses:
+      return
+    if guess in word:
+  		for i in range(len(word)):
+    		if word[i].upper() == guess:
+      		answer_output[i] = guess
+    		if "_" not in answer_output:
+  			  guesses_left = 0 
+    elif guess == word:
+      answer_output = list(word)
+      guesses_left = 0
+    else:
+      past_wrong_guesses.append(guess)
+      guesses_left -= 1
+      sprite_index += 1
+      
+def checkInput(obj,val):
+  if hasattr(obj,val):
+    return obj[val] != 0
+  return 0
+
+</script></html>
